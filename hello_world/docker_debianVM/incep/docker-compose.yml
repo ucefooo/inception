@@ -6,6 +6,8 @@ services:
     image: mariadb
     container_name: mariadb
     build: ./srcs/mariadb
+    volumes:
+      - myDb:/var/lib/mysql/
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mydb
@@ -41,3 +43,4 @@ services:
 
 volumes:
   myVol:
+  myDb:
