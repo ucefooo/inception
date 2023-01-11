@@ -7,7 +7,7 @@ services:
     container_name: mariadb
     build: ./srcs/mariadb
     volumes:
-      - myDb:/var/lib/mysql/
+    - myDb:/var/lib/mysql/
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mydb
@@ -44,3 +44,7 @@ services:
 volumes:
   myVol:
   myDb:
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/youssama/mine/'
