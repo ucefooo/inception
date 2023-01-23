@@ -9,8 +9,11 @@ services:
     build: ./requirements/nginx/
     ports:
       - "443:443"
+      - "500-501:500-501"
     volumes:
       - myWpVm:/var/www/html/
+      - myAdVm:/var/www/adminer/
+      - mySiteVm:/var/www/mySite/
     restart: always
 
 
@@ -41,12 +44,44 @@ services:
       - my_data:/var/lib/mysql/
     restart: always
 
+  adminer:
+    image: adminer
+    container_name: adminer
+    build: ./requirements/bonus/adminer/
+    volumes:
+      - myAdVm:/var/www/adminer/
+    restart: always
+    ports:
+      - 9001
+    depends_on:
+      - mariadb
+
+  redis:
+    image: redis
+    container_name: redis
+    build: ./requirements/bonus/redis/
+    restart: always
+    ports:
+      - "6379:6379"
+
+
+  site:
+    image: site
+    container_name: site
+    build: ./requirements/bonus/site/
+    volumes:
+      - mySiteVm:/var/www/mySite/
+    depends_on:
+      - nginx
+
 
 volumes:
   myWpVm: {}
+  myAdVm: {}
+  mySiteVm: {}
   my_data:
     driver: local
     driver_opts:
       type: none
-      device: /Users/youssama/data/
+      device: /home/jo/Desktop/data
       o: bind
