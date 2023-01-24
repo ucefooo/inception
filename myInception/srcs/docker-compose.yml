@@ -15,6 +15,8 @@ services:
       - myAdVm:/var/www/adminer/
       - mySiteVm:/var/www/mySite/
     restart: always
+    networks:
+      - myNetwork
 
 
   wordpress:
@@ -30,6 +32,8 @@ services:
     env_file:
       - .env
     restart: always
+    networks:
+      - myNetwork
     
 
   mariadb:
@@ -41,8 +45,10 @@ services:
     env_file:
       - .env
     volumes:
-      - my_data:/var/lib/mysql/
+      - myDbVm:/var/lib/mysql/
     restart: always
+    networks:
+      - myNetwork
 
   adminer:
     image: adminer
@@ -55,6 +61,8 @@ services:
       - 9001
     depends_on:
       - mariadb
+    networks:
+      - myNetwork
 
   redis:
     image: redis
@@ -63,6 +71,8 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - myNetwork
 
 
   site:
@@ -73,15 +83,33 @@ services:
       - mySiteVm:/var/www/mySite/
     depends_on:
       - nginx
+    networks:
+      - myNetwork
+
+  ctop:
+    image: ctop
+    container_name: ctop
+    tty: true
+    build: ./requirements/bonus/service/
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "3000:80"
+    networks:
+      - myNetwork
 
 
 volumes:
   myWpVm: {}
   myAdVm: {}
   mySiteVm: {}
-  my_data:
+  myDbVm:
     driver: local
     driver_opts:
       type: none
-      device: /home/jo/Desktop/data
+      device: /home/youssama/data/
       o: bind
+
+networks:
+  myNetwork:
