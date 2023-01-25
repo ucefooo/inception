@@ -1,0 +1,63 @@
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+
+	ssl_certificate /etc/nginx/ssl/localhost.crt;
+	ssl_certificate_key /etc/nginx/ssl/localhost.key;
+
+	server_name youssama.42.fr;
+
+	root /var/www/html/;
+	index index.php index.nginx-debian.html;
+
+	location / {
+		try_files $uri $uri/ /index.php$is_args$args;
+	}
+
+	location ~ \.php$ {
+		try_files $uri =404;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass	wordpress:9000;
+		include			fastcgi_params;
+		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param	PATH_INFO $fastcgi_path_info;
+	}
+}
+
+server {
+	listen 500 ssl;
+
+	ssl_certificate /etc/nginx/ssl/localhost.crt;
+	ssl_certificate_key /etc/nginx/ssl/localhost.key;
+
+	server_name youssama.42.fr;
+	root /var/www/adminer/;
+	index adminer.php;
+
+	location ~ \.php$ {
+		try_files $uri =404;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass	adminer:9001;
+		include			fastcgi_params;
+		fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param	PATH_INFO $fastcgi_path_info;
+	}
+}
+
+server {
+	listen 501 ssl;
+
+	ssl_certificate /etc/nginx/ssl/localhost.crt;
+	ssl_certificate_key /etc/nginx/ssl/localhost.key;
+
+	server_name youssama.42.fr;
+	root /var/www/mySite/;
+	index site.html;
+
+    location / {
+        try_files /site.html =404;
+    }
+
+	location ~* \.(jpg|jpeg|png|gif|svg)$ {
+    }
+}
