@@ -8,6 +8,7 @@ fclean: downAll
 re: fclean all
 
 up:
+	chmod 777 ./srcs/requirements/tools/startUpScript.sh
 	docker-compose -f ./srcs/docker-compose.yml up -d --build 
 
 down: 
