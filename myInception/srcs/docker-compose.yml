@@ -94,8 +94,6 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "3000:80"
     networks:
       - myNetwork
 
