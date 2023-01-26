@@ -4,7 +4,7 @@ services:
   nginx:
     depends_on:
       - wordpress
-    image: nginx:42
+    image: nginx:4.2
     container_name: nginx
     build: ./requirements/nginx/
     ports:
@@ -22,7 +22,7 @@ services:
   wordpress:
     depends_on:
       - mariadb
-    image: wordpress:42
+    image: wordpress:4.2
     container_name: wordpress
     build: ./requirements/wordpress/
     ports:
@@ -37,7 +37,7 @@ services:
     
 
   mariadb:
-    image: mariadb:42
+    image: mariadb:4.2
     container_name: mariadb
     build: ./requirements/mariadb/
     ports:
@@ -51,7 +51,7 @@ services:
       - myNetwork
 
   adminer:
-    image: adminer:42
+    image: adminer:4.2
     container_name: adminer
     build: ./requirements/bonus/adminer/
     volumes:
@@ -65,7 +65,7 @@ services:
       - myNetwork
 
   redis:
-    image: redis:42
+    image: redis:4.2
     container_name: redis
     build: ./requirements/bonus/redis/
     restart: always
@@ -76,7 +76,7 @@ services:
 
 
   site:
-    image: site:42
+    image: site:4.2
     container_name: site
     build: ./requirements/bonus/site/
     volumes:
@@ -87,7 +87,7 @@ services:
       - myNetwork
 
   ctop:
-    image: ctop:42
+    image: ctop:4.2
     container_name: ctop
     tty: true
     build: ./requirements/bonus/service/
@@ -99,14 +99,29 @@ services:
 
 
 volumes:
-  myWpVm: {}
-  myAdVm: {}
-  mySiteVm: {}
+  myWpVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/wordpress/
+      o: bind
+  myAdVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/adminer/
+      o: bind
+  mySiteVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/site/
+      o: bind
   myDbVm:
     driver: local
     driver_opts:
       type: none
-      device: /home/youssama/data/
+      device: /home/youssama/data/dataBase/
       o: bind
 
 networks:
