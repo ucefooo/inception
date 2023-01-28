@@ -1,0 +1,128 @@
+version: "3"
+
+services:
+  nginx:
+    depends_on:
+      - wordpress
+    image: nginx:4.2
+    container_name: nginx
+    build: ./requirements/nginx/
+    ports:
+      - "443:443"
+      - "500-501:500-501"
+    volumes:
+      - myWpVm:/var/www/html/
+      - myAdVm:/var/www/adminer/
+      - mySiteVm:/var/www/mySite/
+    restart: always
+    networks:
+      - myNetwork
+
+
+  wordpress:
+    depends_on:
+      - mariadb
+    image: wordpress:4.2
+    container_name: wordpress
+    build: ./requirements/wordpress/
+    ports:
+      - 9000
+    volumes:
+      - myWpVm:/var/www/html/
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - myNetwork
+    
+
+  mariadb:
+    image: mariadb:4.2
+    container_name: mariadb
+    build: ./requirements/mariadb/
+    ports:
+      - 3306
+    env_file:
+      - .env
+    volumes:
+      - myDbVm:/var/lib/mysql/
+    restart: always
+    networks:
+      - myNetwork
+
+  adminer:
+    image: adminer:4.2
+    container_name: adminer
+    build: ./requirements/bonus/adminer/
+    volumes:
+      - myAdVm:/var/www/adminer/
+    restart: always
+    ports:
+      - 9001
+    depends_on:
+      - mariadb
+    networks:
+      - myNetwork
+
+  redis:
+    image: redis:4.2
+    container_name: redis
+    build: ./requirements/bonus/redis/
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - myNetwork
+
+
+  site:
+    image: site:4.2
+    container_name: site
+    build: ./requirements/bonus/site/
+    volumes:
+      - mySiteVm:/var/www/mySite/
+    depends_on:
+      - nginx
+    networks:
+      - myNetwork
+
+  ctop:
+    image: ctop:4.2
+    container_name: ctop
+    tty: true
+    build: ./requirements/bonus/service/
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - myNetwork
+
+
+volumes:
+  myWpVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/wordpress/
+      o: bind
+  myAdVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/adminer/
+      o: bind
+  mySiteVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/site/
+      o: bind
+  myDbVm:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youssama/data/dataBase/
+      o: bind
+
+networks:
+  myNetwork:
